@@ -1,25 +1,13 @@
 # ALB / SCS revised version of the National Fishes Vulnerability Assessment "GBIF data filtering and AOO estimation_11_13_2018.R"
-# Sam Silknetter 03March2020
+# Sam Silknetter 04March2020
 
-# Install and load necessary libraries. 
-###### SCS to remove unnecessary libraries
+# Install and load necessary libraries.
 library(readr)
-library(tidyverse)
 library(rgbif)
-library(sf)
 library(rgdal)
 library(sp)
 library(rgeos)
-library(adehabitatHR)
-library(ggpubr)
-library(ggplot2)
-library(mapdata)
-library(maps)
-library(maptools)
-library(RColorBrewer)
-library(mapproj)
-library(ggmap)
-library(geosphere)
+
 
 # Set data paths for spatial data. All available through https://github.com/silknets/National-RCS.
 PATH_NatureServeFishRanges <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/NatureServe Shapefiles - All species" 
@@ -81,7 +69,7 @@ Filters[i,2] <- as.numeric(nrow(GBIFSpeciesData))
 
 # Column 3 - GBIF_Issues: Filter records that have the gbif issues COUNTRY_COORDINATE_MISMATCH, RECORDED_DATE_MISMATCH, ZERO_COORDINATE, and
 # IDENTIFIED_DATE_UNLIKELY. 
-dat <- GBIFSpeciesData %>%
+dat <- GBIFSpeciesData %>% 
   occ_issues(-cucdmis, -rdatm, -zerocd, -iddatunl) # By using the minus sign [-], entries with these issues are removed from global data.
 dat_coord <- dat[c("decimalLongitude", "decimalLatitude")] # Create data frame of longitude and latitude for all valid entries.
 Filters[i,3] <- nrow(dat_coord)
@@ -125,4 +113,4 @@ occ_west <- range_clipped[reproj_region_west,]
 Filters[i,10] <- nrow(occ_west)
 }
 
-write.csv(Filters, file = "All_Filters_02March2020.csv") #Write a CSV output file.
+write.csv(Filters, file = "All_Filters.csv") #Write a CSV output file.
