@@ -1,7 +1,7 @@
 # ALB / SCS revised version of the National Fishes Vulnerability Assessment "GBIF data filtering and AOO estimation_11_13_2018.R"
-# Sam Silknetter 02March2020
+# Sam Silknetter 03March2020
 
-# install necessary libraries
+# Install and load necessary libraries. 
 ###### SCS to remove unnecessary libraries
 library(readr)
 library(tidyverse)
@@ -19,22 +19,17 @@ library(maptools)
 library(RColorBrewer)
 library(mapproj)
 library(ggmap)
-library(rgeos)
 library(geosphere)
 
-# Set data paths for spatial data. All avaiable through https://github.com/silknets/National-RCS 
+# Set data paths for spatial data. All available through https://github.com/silknets/National-RCS.
 PATH_NatureServeFishRanges <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/NatureServe Shapefiles - All species" 
 PATH_Estuary <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/merged estuary"
 PATH_StudyExtent <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Region Shapefiles"
 
 # Set a local path to save CSV outputs in this script. 
-PATH_SpeciesData <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Species_Data/" 
-#PATH_East <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Species_Data/East/"
-#PATH_Miss <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Species_Data/Miss/"
-#PATH_Gulf <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Species_Data/Gulf/"
-#PATH_West <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Species_Data/West/"
+PATH_SpeciesData <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Species_Data/"
 
-# Set spatial coordinate reference system (CRS)
+# Set spatial coordinate reference system (CRS).
 crs.geo <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
 crs.albers <- CRS("+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +ellps=GRS80 +datum=NAD83 +units=km +no_defs")
 
@@ -58,7 +53,7 @@ reproj_region_gulf <- spTransform(region_gulf, crs.geo)
 region_west <- readOGR(dsn = PATH_StudyExtent, layer = "West") # Limit occurences to those within the West Region shapefile.
 reproj_region_west <- spTransform(region_west, crs.geo)
 
-# Import candidate species list (N=159 species)
+# Import candidate species list (N=159 species). File available through https://github.com/silknets/National-RCS.
 SpeciesList <- read_csv("G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/CandidateSpeciesList_2020.03.02.csv") 
 
 # Create an empty data frame to be populated with occurrence points after each numbered step (N=10).
@@ -116,22 +111,18 @@ write.csv(range_clipped, file = paste0(PATH_SpeciesData, species, ".csv"), row.n
 # Column 7 - East: Clip occurence points to include only those present in the East Region.
 occ_east <- range_clipped[reproj_region_east,]
 Filters[i,7] <- nrow(occ_east)
-#write.csv(occ_east, file = paste0(PATH_East, species, ".csv"), row.names=FALSE)
 
 # Column 8 - Miss: Clip occurence points to include only those present in the Mississippi Region.
 occ_miss <- range_clipped[reproj_region_miss,]
 Filters[i,8] <- nrow(occ_miss)
-#write.csv(occ_miss, file = paste0(PATH_Miss, species, ".csv"), row.names=FALSE)
 
 # Column 9 - Gulf: Clip occurence points to include only those present in the Gulf Region.
 occ_gulf <- range_clipped[reproj_region_gulf,]
 Filters[i,9] <- nrow(occ_gulf)
-#write.csv(occ_gulf, file = paste0(PATH_Gulf, species, ".csv"), row.names=FALSE)
 
 # Column 10 - West: Clip occurence points to include only those present in the West Region.
 occ_west <- range_clipped[reproj_region_west,]
 Filters[i,10] <- nrow(occ_west)
-#write.csv(occ_west, file = paste0(PATH_West, species, ".csv"), row.names=FALSE)
 }
 
-write.csv(Filters, file = "All_Filters_02March2020.csv") #Write a CSV outputfile.
+write.csv(Filters, file = "All_Filters_02March2020.csv") #Write a CSV output file.
