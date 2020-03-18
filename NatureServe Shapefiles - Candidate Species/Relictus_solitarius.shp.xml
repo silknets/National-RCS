@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{D78712E4-3072-4B02-B964-F50A00605DCB}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15321500</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="153215">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Relictus_solitarius.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>
