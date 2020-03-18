@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{E9BC63B3-60A0-4D32-873F-B211A047A824}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15335400</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="153354">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Cottus_princeps.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>
