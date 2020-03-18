@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{704B3CA9-E850-4B51-A7DE-240D0B85C65C}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15225200</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="152252">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Gambusia_heterochir.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>

@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{0FD86185-A598-4A65-9225-146473F50E58}</MetaID><CreaDate>20100915</CreaDate><CreaTime>14510700</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="145107">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Fundulus_bifax.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>
