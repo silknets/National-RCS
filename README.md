@@ -3,6 +3,25 @@ National Fishes Vulnerability Assessment Project
 
 ===============================
 
+Sam Silknetter (SCS) Updates 03/18/2020
+
+
+-------------------------------
+
+Script 1: "Species Filtering Code_SCS.R"
+
+Code to download and filter GBIF occurrence points for the candidate species list. All fixed data required by the script is now housed through the GitHub repository at https://github.com/silknets/National-RCS. Output files are filtered occurrence points for each candidate species at the national scale. 
+
+-------------------------------
+
+Script 2: "National Area of Occupancy Code_SCS.R"
+
+Code to calculate area of occupancy (AOO) at two grains (HUC12, 1km Point Buffer) for all species in the final list. All fixed data required by the script is now housed through the GitHub repository at https://github.com/silknets/National-RCS. Outputs from Script 1 (Species Filtering) include all candidate species, but AOO code should only include species with > 50 filtered occurrence points plus 'exception species'. Output files include  shapefiles at both grains/species, and a CSV with AOO values and ranks for both grain sizes. 
+
+===============================
+
+OLD READ.ME information. To be revised by SCS in Spring 2020, ignore the info below for now. 
+
 Sam Silknetter (SCS) Updates 03/09/2019
 
 All files from NFVAP downloaded and uploaded to SCS personal Git repository; no files from the original NFVAP repository were edited. I've added the last date the code was modified at the end of the file name ("Data"_MM-DD-YYYY)

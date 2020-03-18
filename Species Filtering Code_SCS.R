@@ -1,5 +1,5 @@
-# ALB / SCS revised version of the National Fishes Vulnerability Assessment "GBIF data filtering and AOO estimation_11_13_2018.R"
-# Sam Silknetter 04March2020
+# Species Filtering Code for the National Fishes Vulnerability Assessment - "Species Filtering Code_SCS.R"
+# Revised by Sam Silknetter, 18March2020
 
 # Install and load necessary libraries.
 library(readr)
@@ -8,14 +8,15 @@ library(rgdal)
 library(sp)
 library(rgeos)
 
-
 # Set data paths for spatial data. All available through https://github.com/silknets/National-RCS.
-PATH_NatureServeFishRanges <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/NatureServe Shapefiles - All species" 
 PATH_Estuary <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/merged estuary"
 PATH_StudyExtent <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Region Shapefiles"
+  # NatureServe shapefiles had to be saved using subdirectories in GitHub. Download locally into a single folder for path below. 
+PATH_NatureServeFishRanges <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Local_NatureServe Shapefiles - Candidate species" 
+
 
 # Set a local path to save CSV outputs in this script. 
-PATH_SpeciesData <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/Species_Data/"
+PATH_NationalOccurrenceData <- "G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/National_Occurrence_Data/"
 
 # Set spatial coordinate reference system (CRS).
 crs.geo <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84")
@@ -92,9 +93,9 @@ reproj_range <- spTransform(range, crs.geo)
 range_clipped <- estuary_final[reproj_range,]  
 Filters[i,6] <- nrow(range_clipped) #This is the final step to filter occurence point data. Columns 7-10 just clip this data by region.
 
-# Save filtered occurrence points to the SpeciesData path for downstream analyses.
+# Save filtered occurrence points at the national scale to the National_Occurrence_Data path for downstream analyses.
 species <- range_clipped$species[1] #Identify the species name for CSV output. 
-write.csv(range_clipped, file = paste0(PATH_SpeciesData, species, ".csv"), row.names=FALSE)
+write.csv(range_clipped, file = paste0(PATH_NationalOccurrenceData, species, ".csv"), row.names=FALSE)
 
 # Column 7 - East: Clip occurence points to include only those present in the East Region.
 occ_east <- range_clipped[reproj_region_east,]
