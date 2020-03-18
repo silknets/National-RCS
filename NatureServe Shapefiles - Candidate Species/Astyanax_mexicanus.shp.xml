@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{B5B8528A-33BE-4DE9-84C9-698063B66DCD}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15273200</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="152732">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Astyanax_mexicanus.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>

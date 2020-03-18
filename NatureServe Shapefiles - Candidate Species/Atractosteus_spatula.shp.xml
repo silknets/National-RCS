@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{8B5E3863-DC02-4AF1-90E4-A0FFCC63E3C9}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15260500</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="152605">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Atractosteus_spatula.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>
