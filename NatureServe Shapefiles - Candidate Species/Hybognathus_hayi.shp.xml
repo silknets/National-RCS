@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{19CB5DF9-8ED6-4C67-92B5-A3055F328F00}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15231200</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="152312">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Hybognathus_hayi.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>

@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{F610A83E-9868-4CE3-881E-1981A72DAEDB}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15230100</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="152301">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Lepisosteus_platyrhincus.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>
