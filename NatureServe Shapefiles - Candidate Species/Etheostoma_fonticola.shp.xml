@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{636EAB7A-8CE9-4F3A-91A3-2F35503DB73E}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15384600</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="153846">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Etheostoma_fonticola.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>
