@@ -1,3 +1,0 @@
-<?xml version="1.0"?>
-<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
-<metadata xml:lang="en"><Esri><MetaID>{AE6A3647-8E58-4CBC-BB8A-1C3B2C5B81CB}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15213500</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="152135">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Moxostoma_ariommum.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>
