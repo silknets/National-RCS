@@ -1,0 +1,3 @@
+<?xml version="1.0"?>
+<!--<!DOCTYPE metadata SYSTEM "http://www.esri.com/metadata/esriprof80.dtd">-->
+<metadata xml:lang="en"><Esri><MetaID>{5C9B57B9-14C4-4DCC-950D-078A33BCA0E7}</MetaID><CreaDate>20100915</CreaDate><CreaTime>15301600</CreaTime><SyncOnce>TRUE</SyncOnce><DataProperties><lineage><Process ToolSource="C:\Program Files (x86)\ArcGIS\ArcToolbox\Toolboxes\Data Management Tools.tbx\CopyFeatures" Date="20100915" Time="153016">CopyFeatures Targets_lyr E:\Projects\Zoology\Fish\Shapefiles\Pteronotropis_signipinnis.shp # 0 0 0</Process></lineage></DataProperties></Esri></metadata>
