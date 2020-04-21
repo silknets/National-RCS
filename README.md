@@ -8,6 +8,7 @@ Sam Silknetter (SCS) Updates 04/21/2020
 -------------------------------
 
 Purpose:
+
 This repository contains R code for analyzing species rarity and climate sensitivity for [N species to be added upon final publication, approximately 140] fish species native to the contiguous (Lower 48) United States. Observations of species occurrence are accessed through the Global Biodiversity Information Facility (GBIF) using the rgbif package. Occurrence points are subject to a set of filters. Once filtered, occurrence points are then used to determine area of occupancy (AOO) for two grain sizes: occupied watersheds (USGS HUC-12 sub-basins) and buffered occurrence points (1km radius). The PRISM climate model (AN81m)[1] is then used to determine species climate sensitivity (CS) for each species' grain-specific AOO. Climate variables examined include annual precipitation (Ppt), daily minimum temperature (Tmin), daily maximum temperature (Tmax), monthly maximum temperature in August (Tmax-Aug), and monthly minimum temperature in January (Tmin-Jan). At each grain size, CS and AOO metrics are combined into a relative rarity and climate sensitivity index (RCS)[2].
 
 Additional planned analyses will use the FishTraits[3] database to assess relationships between geographical (RCS) and functional (traits-based) measures of sensitivity. Upon completion of the traits-based analyses, a more detailed purpose and scope will be provided.
@@ -15,18 +16,23 @@ Additional planned analyses will use the FishTraits[3] database to assess relati
 -------------------------------
 
 Scope:
+
 This National Fishes Vulnerability Assessment Project provides a relative assessment of geographical and functional climate sensitivity for a subset of native freshwater fishes across the contiguous United States.
 
 -------------------------------
 
 Intended Uses:
+
 The analyses herein are intended for use by wildlife managers and conservation practitioners to identify species that have high relative, intrinsic sensitivity to changes in climate. By using relative metrics that can be applied across different spatial scales, these assessments of geographical and functional sensitivity allow for direct comparisons between species with variable data availability, including species that are both well- and poorly-studied. 
 
 -------------------------------
 
 References:
+
 [1] PRISM Datasets - http://www.prism.oregonstate.edu/documents/PRISM_datasets.pdf
+
 [2] Mims, M. C., D. H. Olson, D. S. Pilliod, and J. B. Dunham. 2018. Functional and geographic components of risk for climate sensitive vertebrates in the Pacific Northwest, USA. Biological Conservation 228:183-194.
+
 [3] FishTraits - https://www.sciencebase.gov/catalog/item/5a7c6e8ce4b00f54eb2318c0
 
 ===============================
