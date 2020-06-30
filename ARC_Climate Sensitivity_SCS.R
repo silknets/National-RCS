@@ -1,6 +1,8 @@
 # National Fishes Vulnerability Assessment Project - "ARC_Climate Sensitivity_SCS.R"
 # Revised by Sam Silknetter, 29June2020
 
+# This code generates standard deviations of climate variables.
+
 # This code downloads PRISM climate data and requires a HPC.
 library(prism)
 library(zoo)
@@ -44,7 +46,7 @@ sd_1 = function(x, ...){
   sqrt(v*(l-1)/l)
 }
 
-  # SD function ro exclude non-zero values for binary for loop.
+  # SD function to exclude non-zero values for binary for loop.
 sd_2 = function(x, ...){
   v = var(x[!x == 0], ...)
   l = sum(!is.na(x))
@@ -59,7 +61,7 @@ options(prism.path = PATH_PRISM_ppt)
 PRISM_ppt <- prism_stack(ls_prism_data()) # Note: Ensure prism.path is set to correct climate variable
 
 # Mean and Standard Deviation Calculation
-mean_ppt <- calc(PRISM_ppt, fun = mean_1, na.rm = TRUE)
+mean_ppt <- raster::calc(PRISM_ppt, fun = mean_1, na.rm = TRUE)
   #sd_ppt <- calc(PRISM_ppt, fun = sd_1, na.rm=TRUE)
 #saveRDS(mean_ppt, file = "/home/silknets/NFVAP/ppt_mean.rds")
   #saveRDS(sd, file = "/home/silknets/NFVAP/ppt_sd.rds")

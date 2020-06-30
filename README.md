@@ -7,7 +7,7 @@ Sam Silknetter (SCS) Updates 04/21/2020
 
 -------------------------------
 
-Purpose:
+# Purpose
 
 This repository contains R code for analyzing species rarity and climate sensitivity for [N species to be added upon final publication, approximately 140] fish species native to the contiguous (Lower 48) United States. Observations of species occurrence are accessed through the Global Biodiversity Information Facility (GBIF) using the rgbif package. Occurrence points are subject to a set of filters. Once filtered, occurrence points are then used to determine area of occupancy (AOO) for two grain sizes: occupied watersheds (USGS HUC-12 sub-basins) and buffered occurrence points (1km radius). The PRISM climate model (AN81m)[1] is then used to determine species climate sensitivity (CS) for each species' grain-specific AOO. Climate variables examined include annual precipitation (Ppt), daily minimum temperature (Tmin), daily maximum temperature (Tmax), monthly maximum temperature in August (Tmax-Aug), and monthly minimum temperature in January (Tmin-Jan). At each grain size, CS and AOO metrics are combined into a relative rarity and climate sensitivity index (RCS)[2].
 
@@ -15,19 +15,19 @@ Additional planned analyses will use the FishTraits[3] database to assess relati
 
 -------------------------------
 
-Scope:
+# Scope
 
 This National Fishes Vulnerability Assessment Project provides a relative assessment of geographical and functional climate sensitivity for a subset of native freshwater fishes across the contiguous United States.
 
 -------------------------------
 
-Intended Uses:
+# Intended Uses
 
 The analyses herein are intended for use by wildlife managers and conservation practitioners to identify species that have high relative, intrinsic sensitivity to changes in climate. By using relative metrics that can be applied across different spatial scales, these assessments of geographical and functional sensitivity allow for direct comparisons between species with variable data availability, including species that are both well- and poorly-studied. 
 
 -------------------------------
 
-References:
+# References
 
 [1] PRISM Datasets - http://www.prism.oregonstate.edu/documents/PRISM_datasets.pdf
 
@@ -37,15 +37,47 @@ References:
 
 ===============================
 
+# RCS Script Workflow
+
+-------------------------------
+
 Script 1: "Species Filtering Code_SCS.R"
 
 Code to download and filter GBIF occurrence points for the candidate species list. All fixed data required by the script is now housed through the GitHub repository at https://github.com/silknets/National-RCS. Output files are filtered occurrence points for each candidate species at the national scale. 
 
 -------------------------------
 
-Script 2: "National Area of Occupancy Code_SCS.R"
+Script 2: "ARC_Area of Occupancy Code_SCS.R"
 
 Code to calculate area of occupancy (AOO) at two grains (HUC12, 1km Point Buffer) for all species in the final list. All fixed data required by the script is now housed through the GitHub repository at https://github.com/silknets/National-RCS. Outputs from Script 1 (Species Filtering) include all candidate species, but AOO code should only include species with > 50 filtered occurrence points plus 'exception species'. Output files include  shapefiles at both grains/species, and a CSV with AOO values and ranks for both grain sizes. 
+
+-------------------------------
+
+Script 3: "ARC_PRISM Download_SCS.R"
+
+This code downloads PRISM data using library(prism). Data may be retrieved through the PRISM website - see https://prism.oregonstate.edu/documents/PRISM_downloads_web_service.pdf for additional details.  
+
+-------------------------------
+
+Script 4: "ARC_Climate Sensitivity_SCS.R"
+
+Code to calculate standard deviations of climate variables for each species. This requires PRISM data downloaded via Script 3.  
+
+-------------------------------
+
+Script 5: "ARC_Climate Sensitivity and RCS Code_SCS.R"
+
+This code calculates Climate Sensitivity (CS) from standard deviation values generated in Script 4. Area of Occupancy (AOO) data (generated in Script 2) and CS data are merged into a single RCS output for all species and grains. Finally, the Relative Climate Sensitivity index (RCS) is calculated for each species and range metric. 
+
+===============================
+
+# Figure Scripts - Order Does Not Matter
+
+-------------------------------
+
+Figure 1: "RCS Dot Plot Code.R"
+
+Code to generate the dot plot figure for the Relative Climate Sensitivity index (RCS). Can be modified to plot multiple RCS scores for each species.
 
 ===============================
 

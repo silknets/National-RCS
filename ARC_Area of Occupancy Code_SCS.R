@@ -1,5 +1,7 @@
-# Area of Occupancy Code for the National Fishes Vulnerability Assessment - "Area of Occupancy Code_SCS.R"
+# National Fishes Vulnerability Assessment Project - "ARC_Area of Occupancy Code_SCS.R"
 # Revised by Sam Silknetter, 29June2020
+
+# This code calculates Area of Occupancy (AOO) for each species and range metric. 
 
 # Install necessary libraries.
 library(raster)

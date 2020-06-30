@@ -1,9 +1,8 @@
-# National Fishes Vulnerability Assessment Project - "Climate Sensitivity and RCS Code_SCS.R"
+# National Fishes Vulnerability Assessment Project - "ARC_Climate Sensitivity and RCS Code_SCS.R"
 # Revised by Sam Silknetter, 29June2020
 
-# This code calculates Relative Climate Sensitivity index (RCS) for each species and range metric. 
-#  Can be modified to calculate RCS for other AOO scales. Resulting output from each section exported 
-#  as an independent .csv file for the RCS using that range size metric.  
+# This code calculates Climate Sensitivity (CS) from standard deviation values, merges prior calculations into
+#  an RCS output, and calculates Relative Climate Sensitivity index (RCS) for each species and range metric. 
 
 # Install and load necessary libraries.
 library(scales)

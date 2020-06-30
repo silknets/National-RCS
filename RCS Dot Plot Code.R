@@ -1,12 +1,10 @@
- 
-########       Rarity Ranking Figures      ########
-########   Last updated 18May2019 by SCS   ########
+# National Fishes Vulnerability Assessment Project - "RCS Dot Plot Code.R"
+# Revised by Sam Silknetter, 29June2020
 
+# This code is used only to generate the dot plot figure for the Relative Climate Sensitivity index (RCS). 
+#  Can be modified to plot multiple RCS scores for each species. 
 
-## Set source code
-## Working directory not necessary now that I'm using a Project file 
-
-## Load packages
+# Install and load necessary libraries and source files.
 library(lattice)
 library(vegan)
 library(simba)
@@ -17,7 +15,6 @@ library(plotrix)
 library(MASS)
 library(RColorBrewer)
 source('colorRampPaletteAlpha.R')
-#source('biostats.R', encoding = 'UTF-8')
 
 # Read in RCS data
 Fishes <- read.csv("RCS_05June2020.csv")
