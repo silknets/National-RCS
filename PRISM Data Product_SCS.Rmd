@@ -1,0 +1,77 @@
+---
+title: "PRISM Data Product_SCS.Rmd"
+output: html_notebook
+---
+
+START OF SCS CODE: Revised 28Oct2020
+
+Load necessary libraries. 
+```{r}
+library(prism)
+library(zoo)
+library(tidyverse)
+library(rgdal)
+library(sf)
+library(rgeos)
+library(dplyr)
+library(Matrix.utils)
+library(Hmisc)
+```
+
+Set data paths for input and output data. 
+```{r}
+PATH_SHP_HUC12_All <- "/home/silknets/NFVAP/Shapefiles/HUC12_All.rds"
+
+PATH_PRISM_ppt <- "/home/silknets/NFVAP/PRISM/Ppt/"
+PATH_PRISM_WS_ppt <- "/home/silknets/NFVAP/PRISM/Annual_Watershed_Data/ppt/"
+
+PATH_PRISM_tmax <- "/home/silknets/NFVAP/PRISM/Tmax/"
+PATH_PRISM_WS_tmax <- "/home/silknets/NFVAP/PRISM/Annual_Watershed_Data/tmax/"
+
+PATH_PRISM_tmin <- "/home/silknets/NFVAP/PRISM/Tmin/"
+PATH_PRISM_WS_tmin <- "/home/silknets/NFVAP/PRISM/Annual_Watershed_Data/tmin/"
+
+PATH_PRISM_tmaxAug <- "/home/silknets/NFVAP/PRISM/TmaxAug/"
+PATH_PRISM_WS_tmaxAug <- "/home/silknets/NFVAP/PRISM/Annual_Watershed_Data/tmaxAug/"
+
+PATH_PRISM_tminJan <- "/home/silknets/NFVAP/PRISM/TminJan/"
+PATH_PRISM_WS_tinJan <- "/home/silknets/NFVAP/PRISM/Annual_Watershed_Data/tinJan/"
+```
+
+Load Watershed shapefiles (.rds) from path. Use HUC12_Test to test code with a subset of 10 HUCs.
+```{r}
+HUC12_All <- readRDS(PATH_SHP_HUC12_All)
+HUC12_Test <- HUC12_All[1:10,]
+```
+
+Create a vector of HUC-12 ID as ordered above. 
+```{r}
+HUC_ID <- as.data.frame(HUC12_All@data$HUC12)
+HUC_ID_Test <- as.data.frame(HUC12_Test@data$HUC12)
+```
+
+PRECIPITATION CALCS
+
+Set path and load 'raster stack' to variable-specific prism data. 
+```{r}
+options(prism.path = PATH_PRISM_ppt) 
+PRISM_ppt <- prism_stack(ls_prism_data()) # Note: Ensure prism.path is set to correct climate variable
+```
+
+Create an empty dataframe and run the extraction code. 
+```{r}
+HUC12_ppt_mean <- data.frame(matrix(NA, nrow = 10, ncol = 11)) #For all data, nrow=100537 ncol=123
+
+for(i in 1:10){ #Use this to test for a subset of years (1:123)
+#for(i in 1:nlayers(PRISM_ppt)){
+  X <- PRISM_ppt[[i]]
+  dat.name <- substr(X@file@name, 87, nchar(X@file@name)-8) #Start at 64 to remove file location info
+  Mean <- raster::extract(X, HUC12_Test, fun = mean, weights = TRUE, small = TRUE, method = 'simple', df = TRUE)
+  saveRDS(Mean, file = paste0(PATH_PRISM_WS_ppt, dat.name, ".rds"))
+  HUC12_ppt_mean[, i + 1] <- Mean[,2]
+  colnames(HUC12_ppt_mean) [i + 1] <- dat.name
+}
+
+colnames(HUC12_ppt_mean) [1] <- "HUC_ID"
+HUC12_ppt_mean$HUC_ID <- HUC_ID_Test # Replace generic function ID with HUC-12 ID
+```
