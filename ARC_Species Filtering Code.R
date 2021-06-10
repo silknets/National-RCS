@@ -47,7 +47,7 @@ region_west <- readOGR(dsn = PATH_StudyExtent, layer = "West") # Limit occurence
 reproj_region_west <- spTransform(region_west, crs.geo)
 
 # Import candidate species list (N=159 species). File available through https://github.com/silknets/National-RCS.
-SpeciesList <- read_csv("/home/silknets/GitHub/National-RCS/Focal Species List.csv") 
+SpeciesList <- read_csv("/home/silknets/GitHub/National-RCS/CandidateSpeciesList_2020.03.02.csv") 
 
 # Create an empty data frame to be populated with occurrence points after each numbered step (N=10).
 ColumnCount <- 10 # The number of columns for the Filter dataframe. Must match the number of 'dimnames' strings entered below. 
