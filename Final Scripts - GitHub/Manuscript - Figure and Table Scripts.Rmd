@@ -1,0 +1,665 @@
+---
+title: "National Fishes Vulnerability Assessment Project - Manuscript Figure and Table Scripts"
+author: "Sam Silknetter"
+date: "2023-09-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Table 2 - RCS ANOVA
+Revised by Sam Silknetter, 12June2021
+```{r}
+library(ggpubr)
+library(devtools)
+library (psych)
+library(Hmisc)
+library(tidyr)
+library(stats)
+library(car)
+
+# Paths for data files
+PATH_Traits_Status <- 'G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/RCS Results/RCS_final_26August2021.csv'
+PATH_Export <- 'G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/RCS Results/'
+
+# Read in nationally-calculated RCS data
+Data <- read.csv(PATH_Traits_Status)[-1]
+
+
+
+#### EAST REGION
+
+# Create new objects for each region, clipped to only the species present. 
+east <- Data[complete.cases(Data$RCS_east),]
+east <- east[-c(4:16)]
+
+# Calculate and store mean and standard deviation of both RCS metrics for each region. 
+print(mean(east$RCS_nat))
+print(sd(east$RCS_nat))
+
+print(mean(east$RCS_east))
+print(sd(east$RCS_east))
+
+# Convert to long format based on presence/absence per region. 
+east <- east %>%
+  pivot_longer(cols = RCS_nat:RCS_east, names_to = "group", values_to = "RCS")
+
+# Run an ANOVA of RCS scores by approach.
+east.aov <- aov(RCS ~ group, data = east)
+summary(east.aov)
+capture.output(summary(east.aov),file = paste0(PATH_Export, "east.aov.doc"))
+
+
+
+#### GULF REGION
+
+# Create new objects for each region, clipped to only the species present. 
+gulf <- Data[complete.cases(Data$RCS_gulf),]
+gulf <- gulf[-c(3,5:16)]
+
+# Calculate and store mean and standard deviation of both RCS metrics for each region. 
+print(mean(gulf$RCS_nat))
+print(sd(gulf$RCS_nat))
+
+print(mean(gulf$RCS_gulf))
+print(sd(gulf$RCS_gulf))
+
+# Convert to long format based on presence/absence per region. 
+gulf <- gulf %>%
+  pivot_longer(cols = RCS_nat:RCS_gulf, names_to = "group", values_to = "RCS")
+
+# Run an ANOVA of RCS scores by approach.
+gulf.aov <- aov(RCS ~ group, data = gulf)
+summary(gulf.aov)
+capture.output(summary(gulf.aov),file = paste0(PATH_Export, "gulf.aov.doc"))
+
+
+
+#### MISS REGION
+
+# Create new objects for each region, clipped to only the species present. 
+miss <- Data[complete.cases(Data$RCS_miss),]
+miss <- miss[-c(3:4,6:16)]
+
+# Calculate and store mean and standard deviation of both RCS metrics for each region. 
+print(mean(miss$RCS_nat))
+print(sd(miss$RCS_nat))
+
+print(mean(miss$RCS_miss))
+print(sd(miss$RCS_miss))
+
+# Convert to long format based on presence/absence per region. 
+miss <- miss %>%
+  pivot_longer(cols = RCS_nat:RCS_miss, names_to = "group", values_to = "RCS")
+
+# Run an ANOVA of RCS scores by approach.
+miss.aov <- aov(RCS ~ group, data = miss)
+summary(miss.aov)
+capture.output(summary(miss.aov),file = paste0(PATH_Export, "miss.aov.doc"))
+
+
+
+#### WEST REGION
+
+# Create new objects for each region, clipped to only the species present. 
+west <- Data[complete.cases(Data$RCS_west),]
+west <- west[-c(3:5,7:16)]
+
+# Calculate and store mean and standard deviation of both RCS metrics for each region. 
+print(mean(west$RCS_nat))
+print(sd(west$RCS_nat))
+
+print(mean(west$RCS_west))
+print(sd(west$RCS_west))
+
+# Convert to long format based on presence/absence per region. 
+west <- west %>%
+  pivot_longer(cols = RCS_nat:RCS_west, names_to = "group", values_to = "RCS")
+
+# Run an ANOVA of RCS scores by approach.
+west.aov <- aov(RCS ~ group, data = west)
+summary(west.aov)
+capture.output(summary(west.aov),file = paste0(PATH_Export, "west.aov.doc"))
+```
+
+Table 3 - All Correlations
+Revised by Sam Silknetter, 12June2021
+```{r}
+library(Hmisc)
+
+PATH_Traits_Status <- 'G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/RCS Results/RCS_final_26August2021.csv'
+PATH_Export <- 'G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/RCS Results/'
+
+# Read in all numeric values to be used for correlation analysis. 
+FishData <- read.csv(PATH_Traits_Status)[-c(1:2,8:10,17)]
+
+# Reorder so that regional RCS scores are columns 1:4. 
+FishData <- FishData[, c(2:5,1,6:11)]
+
+
+# Generate matrices of correlations and p-values for all variables.
+result <- rcorr(as.matrix(FishData), type = "spearman")
+result
+
+# Save resulting matrices as data farames. 
+Correlations <- as.data.frame(result$r)
+P_value <- as.data.frame(result$P)
+
+# Export correlation and p-value matrices as CSV files. 
+write.csv(Correlations, file = paste0(PATH_Export, "corr_matrix_26Aug2021.csv"))
+write.csv(P_value, file = paste0(PATH_Export, "pValue_matrix_26Aug2021.csv"))
+```
+
+Figure 3 - RCS Plot
+Revised by Sam Silknetter, 12 June 2021 
+```{r}
+## Load packages
+library(lattice)
+library(vegan)
+library(simba)
+library(cluster)
+library(pvclust)
+library(ecodist)
+library(plotrix)
+library(MASS)
+library(RColorBrewer)
+source('colorRampPaletteAlpha.R')
+
+PATH_Traits_Status <- 'G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/RCS Results/RCS_final_26August2021.csv'
+
+# Read in nationally-calculated RCS data
+Fishes <- read.csv(PATH_Traits_Status)[-1]
+
+# Set up dataframe with regional occurence data. NA values et to >2 so they don't plot. 
+Fishes2 <- Fishes
+Fishes2$Y <- rank(Fishes2$RCS_nat)
+Fishes2$RCS_east[is.na(Fishes$RCS_east)]  <- 2
+Fishes2$RCS_gulf[is.na(Fishes$RCS_gulf)]  <- 2
+Fishes2$RCS_miss[is.na(Fishes$RCS_miss)]  <- 2
+Fishes2$RCS_west[is.na(Fishes$RCS_west)]  <- 2
+
+# National RCS plot as one PDF. 
+pdf("RCS_DotPlot_26Aug2021.pdf", width=6, height=20)
+Fishes <- Fishes[order(Fishes[,2]),] # Make sure species are sorted by RCS_nat values small:large. 
+Fishes$Y <- rank(Fishes$RCS_nat)
+col.nat <- addalpha("gray70", 0.4)
+col.e <- addalpha("#00e6a8", 0.4)
+col.g <- addalpha("#00c4fa", 0.4)
+col.m <- addalpha("#70fcdc", 0.4)
+col.w <- addalpha("#004da7", 0.4)
+dotchart(Fishes[,2], labels = Fishes[,1], xlim=c(1,0), font=3, cex=0.8, pch=21, bg=col.nat, xlab = "RCS Value") 
+points(Fishes2$RCS_east, Fishes2$Y, cex=0.8, pch=22, bg="#00e6a8", type = "p")
+points(Fishes2$RCS_gulf, Fishes2$Y, cex=0.8, pch=23, bg="#00c4fa", type = "p")
+points(Fishes2$RCS_miss, Fishes2$Y, cex=0.8, pch=24, bg="#70fcdc", type = "p")
+points(Fishes2$RCS_west, Fishes2$Y, cex=0.8, pch=25, bg="#004da7", type = "p")
+legend("topright", c("National", "East","Gulf", "Mississippi","West"), cex=.8, 
+       col="black", pt.bg=c("gray70","#00e6a8", "#00c4fa","#70fcdc", "#004da7"), pch=21)
+dev.off()
+
+# Save plot into two panels for fit into the manuscript.
+png("RCS_DotPlot_1of2_26Aug2021.png", width=6.0, height=11, units="in", res=900)
+Fishes <- Fishes[order(Fishes[,2]),] #sorted by National_WS
+Fishes$Y <- rank(Fishes$RCS_nat)
+col.nat <- addalpha("gray70", 0.4)
+col.e <- addalpha("#00e6a8", 0.4)
+col.g <- addalpha("#00c4fa", 0.4)
+col.m <- addalpha("#70fcdc", 0.4)
+col.w <- addalpha("#004da7", 0.4)
+dotchart(Fishes[69:137,2], labels = Fishes[69:137,1], xlim=c(1,0), font=3, cex=0.8, pch=21, bg=col.nat, xlab = "RCS Value") 
+points(Fishes[69:137,3], Fishes[1:69,17], cex=1, pch=22, bg="#00e6a8", type = "p")
+points(Fishes[69:137,4], Fishes[1:69,17], cex=1, pch=23, bg="#00c4fa", type = "p")
+points(Fishes[69:137,5], Fishes[1:69,17], cex=1, pch=24, bg="#70fcdc", type = "p")
+points(Fishes[69:137,6], Fishes[1:69,17], cex=1, pch=25, bg="#004da7", type = "p")
+legend("topright", c("National", "East","Gulf", "Mississippi","West"), cex=.8, 
+       col="black", pt.bg=c("gray70","#00e6a8", "#00c4fa","#70fcdc", "#004da7"), pch=c(21,22,23,24,25))
+dev.off()
+
+png("RCS_DotPlot_2of2_26Aug2021.png", width=6.0, height=11, units="in", res=900)
+Fishes <- Fishes[order(Fishes[,2]),] #sorted by National_WS
+Fishes$Y <- rank(Fishes$RCS_nat)
+col.nat <- addalpha("gray70", 0.4)
+col.e <- addalpha("#00e6a8", 0.4)
+col.g <- addalpha("#00c4fa", 0.4)
+col.m <- addalpha("#70fcdc", 0.4)
+col.w <- addalpha("#004da7", 0.4)
+dotchart(Fishes[1:68,2], labels = Fishes[1:68,1], xlim=c(1,0), font=3, cex=0.8, pch=21, bg=col.nat, xlab = "RCS Value") 
+points(Fishes[1:68,3], Fishes[1:68,17], cex=1, pch=22, bg="#00e6a8", type = "p")
+points(Fishes[1:68,4], Fishes[1:68,17], cex=1, pch=23, bg="#00c4fa", type = "p")
+points(Fishes[1:68,5], Fishes[1:68,17], cex=1, pch=24, bg="#70fcdc", type = "p")
+points(Fishes[1:68,6], Fishes[1:68,17], cex=1, pch=25, bg="#004da7", type = "p")
+legend("topright", c("National", "East","Gulf", "Mississippi","West"), cex=.8, 
+       col="black", pt.bg=c("gray70","#00e6a8", "#00c4fa","#70fcdc", "#004da7"), pch=c(21,22,23,24,25))
+dev.off()
+```
+
+Figure 4 - RCS Bean Plot
+Revised by Sam Silknetter, 12 June 2021
+```{r}
+library(tidyverse)
+
+# Paths for data files
+PATH_Traits_Status <- 'G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/RCS Results/RCS_final_26August2021.csv'
+
+# Read in nationally-calculated RCS data
+Data <- read.csv(PATH_Traits_Status)[-1]
+
+# Subset RCS_nat for the species pool of each region
+for(i in 1:nrow(Data)){
+  Data$East_sub[i] <- if_else(is.na(Data$RCS_east[i]), NA_real_, Data$RCS_nat[i])}
+
+for(i in 1:nrow(Data)){
+  Data$Gulf_sub[i] <- if_else(is.na(Data$RCS_gulf[i]), NA_real_, Data$RCS_nat[i])}
+
+for(i in 1:nrow(Data)){
+  Data$Miss_sub[i] <- if_else(is.na(Data$RCS_miss[i]), NA_real_, Data$RCS_nat[i])}
+
+for(i in 1:nrow(Data)){
+  Data$West_sub[i] <- if_else(is.na(Data$RCS_west[i]), NA_real_, Data$RCS_nat[i])}
+
+# Construct the RCS Beanplots.
+library(beanplot)
+ylim <- c(0, 1)
+i=1
+
+png("Figure 4_RCS Beanplot.png", width=6.0, height=4.0, units="in", res=900)
+N_R_plot <- beanplot(Data$East_sub, Data$RCS_east, Data$Gulf_sub, Data$RCS_gulf, Data$Miss_sub, Data$RCS_miss, Data$West_sub, Data$RCS_west,
+                     ll=0.1, ylim = ylim, main = "National vs Regional RCS Scores", what=c(0,1,0,1), 
+                     col = list(c('gray', 'black'), c('#00e6a8', 'black'), c('gray','black'), c('#00c4fa','black'),
+                                c('gray','black'), c('#70fcdc','black'), c('gray', 'black'), c('#004da7','black')),
+                     border = "#CAB2D6", names = c("East","Gulf","Mississippi","West"),
+                     side = "both", ylab = "RCS Score", cutmin = 0, cutmax = 1)
+dev.off()
+```
+
+Figure 5 - Traits PCoA
+Table 4 - Multivariate Trait Analyses
+Revised by Sam Silknetter, 03July2023
+```{r}
+library(vegan)
+library(ecodist)
+library(dplyr)
+library(cluster)
+library(tidyverse)
+library(MASS)
+source('colorRampPaletteAlpha.R')
+
+# Set path and read in data.
+PATH_Traits_Status <- 'G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/RCS Results/RCS_final_26August2021.csv'
+
+# Read in data, excluding species with < 50% traits availability (here, number removed = 4 spp.).
+Fishes <- read.csv(PATH_Traits_Status)[-c(8,25,33,100), -1]
+#Fishes <- Fishes[complete.cases(Fishes[ ,15:17]),] # Remove all species with incomplete trait data
+
+# Add presence / absence data for each species and region for downstream analyses
+Fishes$East_sub <- Fishes$RCS_east
+Fishes$Gulf_sub <- Fishes$RCS_gulf
+Fishes$Miss_sub <- Fishes$RCS_miss
+Fishes$West_sub <- Fishes$RCS_west
+
+Fishes$East_sub[is.na(Fishes$RCS_east)]  <- 0
+Fishes$Gulf_sub[is.na(Fishes$RCS_gulf)]  <- 0
+Fishes$Miss_sub[is.na(Fishes$RCS_miss)]  <- 0
+Fishes$West_sub[is.na(Fishes$RCS_west)]  <- 0
+
+cuts <- c(0,0.001)
+labs <- c("absent", "present") # Present or absent in given region
+
+Fishes$East_sub <- labs[findInterval(Fishes$East_sub, cuts)]
+Fishes$Gulf_sub <- labs[findInterval(Fishes$Gulf_sub, cuts)]
+Fishes$Miss_sub <- labs[findInterval(Fishes$Miss_sub, cuts)]
+Fishes$West_sub <- labs[findInterval(Fishes$West_sub, cuts)]
+
+
+#################################### 
+#### Setting up for the PCoA
+
+# Log-transform continuous traits.
+maxtl <- Fishes[,12:15]
+maxtl.log <- log(maxtl)
+eco_traits <- Fishes[,10:11]
+Traits.log <- cbind(maxtl,eco_traits)
+Traits.Gower <- daisy(Traits.log, metric="gower")
+Traits2.Gower <- vegdist(Traits.log, metric="gower", na.rm = TRUE)
+
+Traits.pcoa <-cmdscale(Traits.Gower, k=10, eig=TRUE)
+
+# To get percent variation by any PC:
+PC <- (Traits.pcoa$eig/sum(Traits.pcoa$eig))*100
+head(PC)
+
+# To get trait loadings
+trait.loadings <- capture.output(envfit(scores(Traits.pcoa), Traits.log, perm=10000, na.rm = T))
+cat("Fish PCoA Loadings", trait.loadings, file="Fishes_PCoALoadings_26August2021.txt")
+
+# Add PC1 and PC2 to Fish Traits dataset
+Traits.MV <- cbind(Fishes, Traits.pcoa$points[,c(1:2)])
+write.csv(Traits.MV, file="Fishes_PCoAScores_26August2021.csv")
+pcoa_scores <- read.csv("Fishes_PCoAScores_26August2021.csv") #read in csv created
+pcoa_scores <- pcoa_scores[,-1] #remove first column indicating row number
+
+
+#################################### 
+#### Multivariate stats for trait composition and dispersion; ellipses to be used for regional species pool plotting.
+# [region].ado = PERMANOVA; R^2 and p-value reported in [region].ado$aov.tab
+# [region].dispr = PERMDISP2; F stat and p-value reported with summary([region].dispr)
+
+#### EAST REGION
+#Dispersion analyses
+dispr.east <- pcoa_scores[,c(10:15,17)] #keep only necessary traits and region column
+east.matrix <- pcoa_scores[,c(10:15)]
+
+#Analysis of variance using distance matrices
+east.ado <- adonis(east.matrix ~ East_sub, dispr.east, permutations = 999, na.rm = T)
+adonis(east.matrix ~ East_sub, dispr.east, permutations = 99, na.rm = T)
+summary(east.ado)
+
+#Analysis of similarity
+east.dist <- vegdist(Traits.log, method = "gower", na.rm = T)
+attach(dispr.east)
+east.ano1 <- anosim(east.dist, East_sub)
+summary(east.ano1)
+
+#Analysis of dispersion
+east.dispr <- betadisper(east.dist, East_sub) #uses distance matrix from analysis of similarity chunk
+
+#perform test
+anova(east.dispr)
+
+
+
+##GULF REGION
+#Dispersion analyses
+dispr.gulf <- pcoa_scores[,c(10:15,18)] #keep only necessary traits and region column
+gulf.matrix <- pcoa_scores[,c(10:15)]
+
+#Analysis of variance using distance matrices
+gulf.ado <- adonis(gulf.matrix ~ Gulf_sub, dispr.gulf, permutations = 999, na.rm = T)
+summary(gulf.ado)
+
+#Analysis of similarity
+gulf.dist <- vegdist(Traits.log, method = "gower", na.rm = T)
+attach(dispr.gulf)
+gulf.ano1 <- anosim(gulf.dist, Gulf_sub)
+summary(gulf.ano1)
+
+#Analysis of dispersion
+gulf.dispr <- betadisper(gulf.dist, Gulf_sub) #uses distance matrix from analysis of similarity chunk
+
+#perform test
+anova(gulf.dispr)
+
+
+
+##MISS REGION
+#Dispersion analyses
+dispr.miss <- pcoa_scores[,c(10:15,19)] #keep only necessary traits and region column
+miss.matrix <- pcoa_scores[,c(10:15)]
+
+#Analysis of variance using distance matrices
+miss.ado <- adonis(miss.matrix ~ Miss_sub, dispr.miss, permutations = 999, na.rm = T)
+summary(miss.ado)
+
+#Analysis of similarity
+miss.dist <- vegdist(Traits.log, method = "gower", na.rm = T)
+attach(dispr.miss)
+miss.ano1 <- anosim(miss.dist, Miss_sub)
+summary(miss.ano1)
+
+#Analysis of dispersion
+miss.dispr <- betadisper(miss.dist, Miss_sub) #uses distance matrix from analysis of similarity chunk
+
+#perform test
+anova(miss.dispr)
+
+
+
+##WEST REGION
+#Dispersion analyses
+dispr.west <- pcoa_scores[,c(10:15,20)] #keep only necessary traits and region column
+west.matrix <- pcoa_scores[,c(10:15)]
+
+#Analysis of variance using distance matrices
+west.ado <- adonis(west.matrix ~ West_sub, dispr.west, permutations = 999, na.rm = T)
+summary(west.ado)
+
+#Analysis of similarity
+west.dist <- vegdist(Traits.log, method = "gower", na.rm = T)
+attach(dispr.west)
+west.ano1 <- anosim(west.dist, West_sub)
+summary(west.ano1)
+
+#Analysis of dispersion
+west.dispr <- betadisper(west.dist, West_sub) #uses distance matrix from analysis of similarity chunk
+
+#perform test
+anova(west.dispr)
+
+
+#################################### 
+#### National PCoA Plots 
+
+# Base color and plot
+PCoA <- pcoa_scores[,c("X1","X2")]
+vec.trait <- envfit(scores(Traits.pcoa), Traits.log, perm=1000, na.rm=T)
+pointcol1 <- rgb(0,0,0, max=255, alpha = 20, names = "grey20")
+
+# Rough plot to check data
+plot <- plot(PCoA, type="n", xlim=c(-0.4,0.4),ylim=c(-0.4,0.4), xaxt="n", main="Fishes",
+     yaxt="n", xlab="PC1 (57.8%)", ylab="PC2 (31.2%)", cex.lab=1.15) # from head(PC)
+axis(2, at=c(-0.4,-0.2,0,0.2,0.4), cex.axis=1, las=1.5)
+axis(1, at=c(-0.4,-0.2,0,0.2,0.4), cex.axis=1, las=1.5)
+points(Traits.pcoa$points[,c(1:2)], cex=1.5, pch = 21, bg=pointcol1)
+plot(vec.trait, col="black")    
+
+# Add trait vectors manually
+vec.trait$vectors$arrows # Dim1 = x; Dim2 = y
+labels_x <- c(-0.957, -.988, -.993, -0.609, 0.129, 0.159)
+labels_x_ <- labels_x*0.4 # Work-around for the arrow.mul argument
+labels_y <- c( -0.289, -0.156, -0.116, -0.793, -.992, -.987)
+labels_y_ <- labels_y*0.4
+arrows(0, 0, labels_x_, labels_y_, code = 2)
+text(labels_x_, labels_y_, c("Total Length","Maturation Age", "Longevity", "Fecundity", "Diet","Habitat"))
+
+# Set up adjusted point size (scaled for rarity)
+size <- (Fishes$RCS_nat)*2 # I assume this adjusts the point sizeby rarity?
+
+# Plotting
+png("Figure 5 - Traits PCoA_Aug26.png", width=7.0, height=5.0, units="in", res=900)
+plot(PCoA, type="n", xlim=c(-0.5,0.3),ylim=c(-0.4,0.4), xaxt="n", ann=FALSE,
+     yaxt="n", xlab="PC1 (57.7%)", ylab="PC2 (31.4%)", cex.lab=1.15)
+axis(2, at=c(-0.5,-0.3,-0.1,0.1,0.3), cex.axis=1, las=1.5)
+axis(1, at=c(-0.4,-0.2,0,0.2,0.4), cex.axis=1, las=1.5)
+ordiellipse(east.dispr, East_sub, conf=0.95, draw = c("polygon"), show.groups = "present", border = "#00e6a8", lwd=2.5)
+ordiellipse(gulf.dispr, Gulf_sub, conf=0.95, draw = c("polygon"), show.groups = "present", border = "#00c4fa", lwd=2.5)
+ordiellipse(miss.dispr, Miss_sub, conf=0.95, draw = c("polygon"), show.groups = "present", border = "#70fcdc", lwd=2.5)
+ordiellipse(west.dispr, West_sub, conf=0.95, draw = c("polygon"), show.groups = "present", border = "#004da7", lwd=2.5)
+points(pcoa_scores[,c(21:22)], cex=size, pch = 21, bg=pointcol1)
+plot(vec.trait, col="black", labels = "")
+
+dev.off()
+
+
+
+#################################### 
+#### Regional PCoA Plots 
+
+# Subset regional species pools
+east_pts <- c('present')
+east_pts <- pcoa_scores[pcoa_scores$East_sub %in% east_pts,]
+east_pts <-east_pts[,c("X1","X2")]
+
+gulf_pts <- c('present')
+gulf_pts <- pcoa_scores[pcoa_scores$Gulf_sub %in% gulf_pts,]
+gulf_pts <-gulf_pts[,c("X1","X2")]
+
+miss_pts <- c('present')
+miss_pts <- pcoa_scores[pcoa_scores$Miss_sub %in% miss_pts,]
+miss_pts <-miss_pts[,c("X1","X2")]
+
+west_pts <- c('present')
+west_pts <- pcoa_scores[pcoa_scores$West_sub %in% west_pts,]
+west_pts <-west_pts[,c("X1","X2")]
+
+
+png("PCoA_east.png", width=5.0, height=4.0, units="in", res=900)
+plot <- plot(PCoA, type="n", xlim=c(-0.5,0.3),ylim=c(-0.4,0.4), xaxt="n", ann=FALSE, yaxt="n")
+ordiellipse(east.dispr, East_sub, conf=0.95, draw = c("polygon"), show.groups = "present", border = "#00e6a8", lwd=2.5)
+points(Traits.pcoa$points[,c(1:2)], cex=size, pch = 21, bg=pointcol1)
+points(east_pts, cex=2, pch = 21, bg="#00e6a8")
+dev.off() 
+
+png("PCoA_gulf.png", width=5.0, height=4.0, units="in", res=900)
+plot <- plot(PCoA, type="n", xlim=c(-0.5,0.3),ylim=c(-0.4,0.4), xaxt="n", ann=FALSE, yaxt="n")
+ordiellipse(gulf.dispr, Gulf_sub, conf=0.95, draw = c("polygon"), show.groups = "present", border = "#00c4fa", lwd=2.5)
+points(Traits.pcoa$points[,c(1:2)], cex=size, pch = 21, bg=pointcol1)
+points(gulf_pts, cex=2, pch = 21, bg="#00c4fa")
+dev.off()
+
+png("PCoA_miss.png", width=5.0, height=4.0, units="in", res=900)
+plot <- plot(PCoA, type="n", xlim=c(-0.5,0.3),ylim=c(-0.4,0.4), xaxt="n", ann=FALSE, yaxt="n")
+ordiellipse(miss.dispr, Miss_sub, conf=0.95, draw = c("polygon"), show.groups = "present", border = "#70fcdc", lwd=2.5)
+points(Traits.pcoa$points[,c(1:2)], cex=size, pch = 21, bg=pointcol1)
+points(miss_pts, cex=2, pch = 21, bg="#70fcdc")
+dev.off()
+
+png("PCoA_west.png", width=5.0, height=4.0, units="in", res=900)
+plot <- plot(PCoA, type="n", xlim=c(-0.5,0.3),ylim=c(-0.4,0.4), xaxt="n", ann=FALSE, yaxt="n")
+ordiellipse(west.dispr, West_sub, conf=0.95, draw = c("polygon"), show.groups = "present", border = "#004da7", lwd=2.5)
+points(Traits.pcoa$points[,c(1:2)], cex=size, pch = 21, bg=pointcol1)
+points(west_pts, cex=2, pch = 21, bg="#004da7")
+dev.off()
+```
+
+Figure 6 - Conservation Status
+Figure S1 - National RCS Scores by Conservation Status
+Table S6 - Dunn's Test Results
+Revised by Sam Silknetter, 12June2021
+```{r}
+library(dplyr)
+library(PMCMRplus)
+library(dunn.test)
+library(tidyr)
+library(ggplot2)
+library(ggpubr)
+library(car)
+
+# Paths for data files
+PATH_Traits_Status <- 'G:/Shared drives/NFVAP - National RCS/R Code/National-RCS/RCS Results/RCS_final_26August2021.csv'
+
+# Read in nationally-calculated RCS data
+Data <- read.csv(PATH_Traits_Status)[-1]
+
+# Kruskall-Wallis and Dunn's Test
+kruskal.test(RCS_nat ~ STATUS, data=Data)
+dunn.test(Data$RCS_nat, g=Data$STATUS, kw=TRUE, label=TRUE, method="bonferroni")
+
+# Levene's test with one independent variable
+leveneTest(RCS_nat ~ STATUS, data=Data)
+
+####################################################################
+# FIGURE 6 - CONSERVATION STATUS BOXPLOTS
+
+# Change status to a factor, and rename based on listing status classifications. 
+Data$STATUS <- as.factor(Data$STATUS)
+levels(Data$STATUS)[levels(Data$STATUS)=="0"] <- "Not Listed"
+levels(Data$STATUS)[levels(Data$STATUS)=="1"] <- "State Listed"
+levels(Data$STATUS)[levels(Data$STATUS)=="2"] <- "Threatened"
+levels(Data$STATUS)[levels(Data$STATUS)=="3"] <- "Endangered"
+
+# Convert to long format for each region. 
+East_Data <- Data [,c(1:3,16)]
+East_Data <- East_Data[complete.cases(East_Data[ ,3]),]
+East_Data <- rename(East_Data, National = RCS_nat, Regional = RCS_east)
+East_Data <- pivot_longer(East_Data, cols = National:Regional, names_to = "approach", values_to = "RCS")
+
+Gulf_Data <- Data [,c(1:2,4,16)]
+Gulf_Data <- Gulf_Data[complete.cases(Gulf_Data[ ,3]),]
+Gulf_Data <- rename(Gulf_Data, National = RCS_nat, Regional = RCS_gulf)
+Gulf_Data <- pivot_longer(Gulf_Data, cols = National:Regional, names_to = "approach", values_to = "RCS")
+
+Miss_Data <- Data [,c(1:2,5,16)]
+Miss_Data <- Miss_Data[complete.cases(Miss_Data[ ,3]),]
+Miss_Data <- rename(Miss_Data, National = RCS_nat, Regional = RCS_miss)
+Miss_Data <- pivot_longer(Miss_Data, cols = National:Regional, names_to = "approach", values_to = "RCS")
+
+West_Data <- Data [,c(1:2,6,16)]
+West_Data <- West_Data[complete.cases(West_Data[ ,3]),]
+West_Data <- rename(West_Data, National = RCS_nat, Regional = RCS_west)
+West_Data <- pivot_longer(West_Data, cols = National:Regional, names_to = "approach", values_to = "RCS")
+
+# Generate plots for each region individually. 
+plot_east_STATUS <- ggplot(data=East_Data, aes(x=STATUS , y=RCS, fill=factor(approach)))+
+  geom_boxplot()+
+  theme_classic()+
+  theme(legend.position = "none")+
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())+
+  geom_point(position=position_jitterdodge(),alpha=0.3)+
+  ylim(0, 1)
+plot_east_STATUS$data$STATUS <- factor(plot_east_STATUS$data$STATUS, 
+                                       levels=c("Not Listed", "State Listed", "Threatened", "Endangered"))
+east_plot <- plot_east_STATUS + scale_fill_manual(values=c('gray', '#00e6a8'))
+east_plot
+
+plot_gulf_STATUS <- ggplot(data=Gulf_Data, aes(x=STATUS , y=RCS, fill=factor(approach)))+
+  geom_boxplot()+
+  theme_classic()+
+  theme(legend.position = "none")+
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())+
+  theme(axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())+
+  geom_point(position=position_jitterdodge(),alpha=0.3)+
+  ylim(0, 1)
+plot_gulf_STATUS$data$STATUS <- factor(plot_gulf_STATUS$data$STATUS, 
+                                       levels=c("Not Listed", "State Listed", "Threatened", "Endangered"))
+gulf_plot <- plot_gulf_STATUS + scale_fill_manual(values=c('gray', '#00c4fa'))
+gulf_plot
+
+plot_miss_STATUS <- ggplot(data=Miss_Data, aes(x=STATUS , y=RCS, fill=factor(approach)))+
+  geom_boxplot()+
+  theme_classic()+
+  theme(legend.position = "none")+
+  geom_point(position=position_jitterdodge(),alpha=0.3)+
+  ylim(0, 1)
+plot_miss_STATUS$data$STATUS <- factor(plot_miss_STATUS$data$STATUS, 
+                                       levels=c("Not Listed", "State Listed", "Threatened", "Endangered"))
+miss_plot <- plot_miss_STATUS + scale_fill_manual(values=c('gray', '#70fcdc'))
+miss_plot
+
+plot_west_STATUS <- ggplot(data=West_Data, aes(x=STATUS , y=RCS, fill=factor(approach)))+
+  geom_boxplot()+
+  theme_classic()+
+  theme(legend.position = "none")+
+  theme(axis.title.y=element_blank(), axis.text.y=element_blank(), axis.ticks.y=element_blank())+
+  geom_point(position=position_jitterdodge(),alpha=0.3)+
+  ylim(0, 1)
+plot_west_STATUS$data$STATUS <- factor(plot_west_STATUS$data$STATUS, 
+                                       levels=c("Not Listed", "State Listed", "Threatened", "Endangered"))
+west_plot <- plot_west_STATUS + scale_fill_manual(values=c('gray', '#004da7'))
+west_plot
+
+# Combine plots into single panel. 
+png("Figure 6 - Conservation Status_Aug2021.png", width=7.0, height=5.0, units="in", res=900)
+ggarrange(east_plot, gulf_plot, miss_plot, west_plot,
+          common.legend = TRUE, legend = "bottom",
+          widths = c(1.15, 1),
+          ncol = 2, nrow = 2)
+dev.off()
+
+#########################
+# National Plot
+png("Figure S3 - National Conservation Status_Aug2021.png", width=4.0, height=4.0, units="in", res=900)
+plot_national_STATUS <- ggplot(data=Data)+
+  scale_y_continuous("RCS Index")+
+  scale_x_discrete("")+
+  geom_jitter(aes(x=`STATUS`, y=RCS_nat),position=position_jitter(0.2))+
+  geom_boxplot(aes(x=`STATUS`, y=RCS_nat), fill="gray", alpha=0.0)+
+  theme_classic()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  ggtitle('\nConservation Status by RCS')
+plot_national_STATUS$data$STATUS <- factor(plot_national_STATUS$data$STATUS, 
+                                           levels=c("Not Listed", "State Listed", "Threatened", "Endangered"))
+plot_national_STATUS
+dev.off()
+```
+
